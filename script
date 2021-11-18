@@ -1,0 +1,53 @@
+#!/bin/bash
+
+LOGADDRESS=/usr/xhistory/xhistory
+TEMP=~/.xhistory/.tempxhistory
+RED='\033[0;31m'
+NC='\033[0m'
+
+tail -1 ~/.bash_history > $TEMP
+while read line;
+do
+        SSS=`echo $line | awk {'print $NF'}`
+
+        if [ `grep $SSS /usr/xhistory/blacklist` ]
+        then
+                echo -e "${RED} *${NC}" >> $LOGADDRESS
+        else
+                HISTTIMEFORMAT=" "
+                tail -1 ~/.bash_history >> $LOGADDRESS
+        fi
+done < $TEMP
+
+
+printf '\e[1;34m%-6s\e[m\t' 'success? ' >> $LOGADDRESS
+#$(tail -1 ~/.bash_history) >/dev/null 2>&1
+if [ $? = 0 ]
+then
+        echo 'yes' >> $LOGADDRESS
+else
+        echo -e "${RED} no (${?})${NC}" >> $LOGADDRESS
+fi
+
+printf '\e[1;34m%-6s\e[m\t\t'  'user:' >> $LOGADDRESS
+echo $USER >> $LOGADDRESS
+
+printf '\e[1;34m%-6s\e[m\t\t' 'time:' >> $LOGADDRESS
+echo $(<~/.xhistory/.timexhistory) >> $LOGADDRESS
+
+printf '\e[1;34m%-6s\e[m\t' 'execution time:' >> $LOGADDRESS
+echo $(<~/.xhistory/.exexhistory) >> $LOGADDRESS
+
+printf '\e[1;34m%-6s\e[m\t\t' 'path:' >> $LOGADDRESS
+echo $PWD >> $LOGADDRESS
+
+printf '\e[1;34m%-6s\e[m\t\t' 'uptime:' >> $LOGADDRESS
+echo $(uptime -p) >> $LOGADDRESS
+
+echo >> $LOGADDRESS
+
+echo -e "${RED}**************${NC}"
+
+#if [ -e $TEMP ]; then rm $TEMP; fi
+#if [ -e ~/.timexhistory ]; then rm ~/.timexhistory; fi
+#if [ -e ~/.exexhistory ]; then rm ~/.exexhistory; fi

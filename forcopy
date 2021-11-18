@@ -1,0 +1,11 @@
+
+# xhistory
+if [ ! -d ~/.xhistory ]
+then
+        mkdir ~/.xhistory
+fi
+touch ~/.xhistory/.timexhistory
+touch ~/.xhistory/.exexhistory
+PS0='${t:0:$((t=$(date +%s%N),0))}'
+PROMPT_COMMAND='date "+%T %F" > ~/.xhistory/.timexhistory;(( t )) && printf %d.%09ds > ~/.xhistory/.exexhistory $((t=$(date +%s%N)-t,t/1000000000)) $((t%1000000000)); t=0 ; history -a; /usr/xhistory/.xhistoryscript;'
+alias xhistory='less -r +G /usr/xhistory/xhistory'
